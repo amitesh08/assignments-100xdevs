@@ -16,6 +16,23 @@ setInterval(() => {
     numberOfRequestsForUser = {};
 }, 1000)
 
+app.use((req,res,next)=>{
+  const userId = req.query.userId;
+    if(numberOfRequestsForUser[userId]){ // if the user sent any request before 
+        numberOfRequestsForUser[userId]++;
+        if(numberOfRequestsForUser[userId] > 5){
+            res.status(404).send("error")
+        }
+        else{
+            next();
+        }
+    }
+    else{
+        numberOfRequestsForUser[userId]=1;  // if user has not send any request yet so we have it to initialize it before
+        next()
+    }
+})
+
 app.get('/user', function(req, res) {
   res.status(200).json({ name: 'john' });
 });
